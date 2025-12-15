@@ -17,15 +17,15 @@ const formatterSuppression = (parcours: Parcours) => {
 };
 const columns = [
 
-  { field: 'EditionParcours', label: 'Edition', formatter: formatterEdition, onClick: () => { } },
+  { field: 'EditionParcours', label: 'Edition', formatter: formatterEdition, onClick: (p: Parcours) => parcoursForm.value?.openForm(p), style: 'width: 32px;text-align:center;' },
 
-  { field: 'ID', label: 'ID', formatter: null },
+  { field: 'ID', label: 'ID', formatter: null, onClick: null, style: null },
 
-  { field: 'NomParcours', label: 'Intitulé', formatter: null, onClick: null },
+  { field: 'NomParcours', label: 'Intitulé', formatter: null, onClick: null, style: null },
 
-  { field: 'AnneeFormation', label: 'Année', formatter: null, onClick: null },
+  { field: 'AnneeFormation', label: 'Année', formatter: null, onClick: null, style: null },
 
-  { field: 'DeleteParcours', label: 'Suppression', formatter: formatterSuppression, onClick: () => { } },
+  { field: 'DeleteParcours', label: 'Suppression', formatter: formatterSuppression, onClick: () => { }, style: 'width: 32px;text-align:center;' },
 
 ];
 onMounted(() => {
