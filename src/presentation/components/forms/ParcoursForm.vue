@@ -64,18 +64,21 @@ const props = defineProps({
 });
 
 const saveParcours = () => {
+
+  if (formErrors.value.NomParcours || formErrors.value.AnneeFormation) {
+
+    return;
+
+  }
   if (currentParcours.value.ID) {
-    // Mise à jour d'un parcours (plus tard)
+    // Mise à jour d'un parcours
   } else {
-    ParcoursDAO.getInstance()
-        .create(currentParcours.value)
-        .then(() => {
-          alert('Parcours créé avec succès');
-          closeForm();
-        })
-        .catch((ex) => {
-          alert(ex.message);
-        });
+    ParcoursDAO.getInstance().create(currentParcours.value).then(() => {
+      alert('Parcours créé avec succès');
+      closeForm();
+    }).catch((ex) => {
+      alert(ex.message);
+    });
   }
 };
 
