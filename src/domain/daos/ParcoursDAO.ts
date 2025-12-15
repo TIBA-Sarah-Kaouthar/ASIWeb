@@ -34,9 +34,13 @@ export class ParcoursDAO implements IDAO<Parcours> {
     }
 
     public async delete(id: number): Promise<void> {
-        // Delete a Parcours document from the database 
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/Parcours/${id}`);
+        } catch (error) {
+            throw new Error('Impossible de supprimer le parcours');
+        }
     }
-
+    
     public async list(): Promise<Parcours[]> {
         // List all Parcours documents from the database 
         return [
