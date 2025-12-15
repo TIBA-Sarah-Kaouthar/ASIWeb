@@ -15,6 +15,10 @@ const formatterEdition = (parcours: Parcours) => {
 const formatterSuppression = (parcours: Parcours) => {
   return '<i class="bi bi-trash-fill text-danger"></i>';
 };
+
+const onParcoursCreated = (newParcours: Parcours) => {
+  parcours.value.unshift(newParcours);
+};
 const columns = [
 
   { field: 'EditionParcours', label: 'Edition', formatter: formatterEdition, onClick: (p: Parcours) => parcoursForm.value?.openForm(p), style: 'width: 32px;text-align:center;' },
@@ -37,6 +41,7 @@ onMounted(() => {
   });
 
 });
+
 </script>
 
 <template>
@@ -71,6 +76,6 @@ onMounted(() => {
 
   </div>
 
-  <ParcoursForm ref="parcoursForm" :parcours="null" />
+  <ParcoursForm ref="parcoursForm" @create:parcours="onParcoursCreated" />
 
 </template> 

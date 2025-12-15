@@ -62,19 +62,21 @@ const props = defineProps({
     default: null,
   },
 });
+const emit = defineEmits(['create:parcours', 'update:parcours']);
 
 const saveParcours = () => {
-
+  
   if (formErrors.value.NomParcours || formErrors.value.AnneeFormation) {
 
     return;
-
+    
   }
   if (currentParcours.value.ID) {
     // Mise à jour d'un parcours
   } else {
-    ParcoursDAO.getInstance().create(currentParcours.value).then(() => {
+    ParcoursDAO.getInstance().create(currentParcours.value).then((newParcours) => {
       alert('Parcours créé avec succès');
+      emit('create:parcours', newParcours);
       closeForm();
     }).catch((ex) => {
       alert(ex.message);
