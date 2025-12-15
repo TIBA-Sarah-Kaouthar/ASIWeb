@@ -2,6 +2,7 @@
 import type { IDAO } from './IDAO';
 import axios from 'axios';
 
+
 export class ParcoursDAO implements IDAO<Parcours> {
     private static instance: ParcoursDAO;
 
@@ -22,7 +23,6 @@ export class ParcoursDAO implements IDAO<Parcours> {
             throw new Error('Impossible de créer le nouveau parcours');
         }
     }
-
     public async get(id: number): Promise<Parcours> {
         // Retrieve a Parcours document from the database 
         return { ID: id, NomParcours: 'Parcours 1', AnneeFormation: 2024 };

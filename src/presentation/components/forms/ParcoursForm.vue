@@ -29,9 +29,10 @@ const props = defineProps({
     default: null,
   },
 });
+
 const saveParcours = () => {
   if (currentParcours.value.ID) {
-    // Mise à jour d'un parcours (tu feras plus tard)
+    // Mise à jour d'un parcours (plus tard)
   } else {
     ParcoursDAO.getInstance()
         .create(currentParcours.value)
@@ -45,7 +46,6 @@ const saveParcours = () => {
   }
 };
 
-
 onBeforeMount(() => {
   if (props.parcours) {
     currentParcours.value = props.parcours;
@@ -57,6 +57,7 @@ defineExpose({
   closeForm,
 });
 </script>
+
 <template>
   <div v-if="isOpen" class="custom-modal">
     <div class="card new-parcours">
@@ -67,22 +68,44 @@ defineExpose({
       <div class="card-body">
         <div class="card-text mt-1 mb-1">
           <form>
-            <CustomInput id="intitule" libelle="Intitulé" type="text" placeholder="Intitulé du parcours" />
-            <CustomInput class="mt-2" id="annee" libelle="Année" type="number"
-                         placeholder="Année de formation" />
+            <CustomInput
+                id="intitule"
+                libelle="Intitulé"
+                type="text"
+                placeholder="Intitulé du parcours"
+                v-model="currentParcours.NomParcours"
+            />
+            <CustomInput
+                class="mt-2"
+                id="annee"
+                libelle="Année"
+                type="number"
+                placeholder="Année de formation"
+                v-model="currentParcours.AnneeFormation"
+            />
           </form>
         </div>
-        <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.danger"
-                      @click="closeForm">
+        <CustomButton
+            class="mt-1"
+            style="margin-left: 5px"
+            :color="BootstrapButtonEnum.danger"
+            @click="closeForm"
+        >
           Annuler
         </CustomButton>
-        <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.primary" @click="saveParcours">
+        <CustomButton
+            class="mt-1"
+            style="margin-left: 5px"
+            :color="BootstrapButtonEnum.primary"
+            @click="saveParcours"
+        >
           Enregistrer
         </CustomButton>
       </div>
     </div>
   </div>
 </template>
+
 <style scoped>
 .custom-modal {
   position: absolute;
@@ -111,4 +134,4 @@ defineExpose({
 .card-text {
   text-align: left;
 }
-</style> 
+</style>

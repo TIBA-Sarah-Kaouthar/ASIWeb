@@ -2,10 +2,11 @@
 const model = defineModel();
 
 const props = defineProps<{
-  id: string;
-  libelle: string;
-  type: string;
-  placeholder: string | undefined;
+  id: string,
+  libelle: string,
+  type: string,
+  placeholder: string | undefined,
+  error: string | undefined | null,
 }>();
 </script>
 
