@@ -5,10 +5,31 @@ import { Parcours } from '@/domain/entities/Parcours';
 import CustomInput from '@/presentation/components/forms/components/CustomInput.vue';
 import CustomButton from '@/presentation/components/forms/components/CustomButton.vue';
 import { ParcoursDAO } from '@/domain/daos/ParcoursDAO';
+import { watch } from 'vue';
+
 
 const currentParcours = ref<Parcours>(new Parcours(null, null, null));
 const isOpen = ref(false);
+const formErrors = ref<{
+  NomParcours: string | null;
+  AnneeFormation: string | null;
+}>({
+  NomParcours: null,
+  AnneeFormation: null,
+});
 
+watch(() => currentParcours.value.NomParcours, () => {
+  if (
+      !currentParcours.value.NomParcours ||
+      currentParcours.value.NomParcours.trim() === '' ||
+      currentParcours.value.NomParcours.length < 3
+  ) {
+    formErrors.value.NomParcours =
+        'Le nom du parcours doit faire au moins 3 caractères';
+  } else {
+    formErrors.value.NomParcours = null;
+  }
+});
 const openForm = (parcours: Parcours | null = null) => {
   isOpen.value = true;
 
@@ -16,6 +37,18 @@ const openForm = (parcours: Parcours | null = null) => {
     currentParcours.value = structuredClone(toRaw(parcours));
   }
 };
+watch(() => currentParcours.value.NomParcours, () => {
+  if (
+      !currentParcours.value.NomParcours ||
+      currentParcours.value.NomParcours.trim() === '' ||
+      currentParcours.value.NomParcours.length < 3
+  ) {
+    formErrors.value.NomParcours =
+        'Le nom du parcours doit faire au moins 3 caractères';
+  } else {
+    formErrors.value.NomParcours = null;
+  }
+});
 
 const closeForm = () => {
   isOpen.value = false;
@@ -56,6 +89,7 @@ defineExpose({
   openForm,
   closeForm,
 });
+
 </script>
 
 <template>
@@ -74,6 +108,7 @@ defineExpose({
                 type="text"
                 placeholder="Intitulé du parcours"
                 v-model="currentParcours.NomParcours"
+                :error="formErrors.NomParcours"
             />
             <CustomInput
                 class="mt-2"

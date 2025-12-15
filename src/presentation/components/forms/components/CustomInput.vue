@@ -11,8 +11,21 @@ const props = defineProps<{
 </script>
 
 <template>
+
   <div class="form-group">
+
     <label for="intitule">{{ libelle }} :</label>
-    <input v-model="model" class="form-control" :type="type" :id="id" :placeholder="placeholder" />
+
+    <input v-model="model" :class="{ 'form-control': true, 'is-invalid': error }" :type="type" :id="id"
+
+           :placeholder="placeholder" />
+
+    <div v-if="error" class="invalid-feedback">
+
+      {{ error }}
+
+    </div>
+
   </div>
+
 </template>
