@@ -4,6 +4,7 @@ import { BootstrapButtonEnum } from '@/types/BootstrapButtonEnum';
 import { Parcours } from '@/domain/entities/Parcours';
 import CustomInput from '@/presentation/components/forms/components/CustomInput.vue';
 import CustomButton from '@/presentation/components/forms/components/CustomButton.vue';
+import CustomModal from '@/presentation/components/modals/CustomModal.vue';
 import { ParcoursDAO } from '@/domain/daos/ParcoursDAO';
 import { watch } from 'vue';
 
@@ -98,54 +99,39 @@ defineExpose({
 </script>
 
 <template>
-  <div v-if="isOpen" class="custom-modal">
-    <div class="card new-parcours">
-      <div class="card-header" style="background: #273656">
-        <template v-if="parcours && parcours.ID"> Modification du parcours </template>
-        <template v-else> Nouveau parcours </template>
-      </div>
-      <div class="card-body">
-        <div class="card-text mt-1 mb-1">
-          <form>
-            <CustomInput
-                id="intitule"
-                libelle="Intitulé"
-                type="text"
-                placeholder="Intitulé du parcours"
-                v-model="currentParcours.NomParcours"
-                :error="formErrors.NomParcours"
-            />
-            <CustomInput
-                class="mt-2"
-                id="annee"
-                libelle="Année"
-                type="number"
-                placeholder="Année de formation"
-                v-model="currentParcours.AnneeFormation"
-            />
-          </form>
-        </div>
-        <CustomButton
-            class="mt-1"
-            style="margin-left: 5px"
-            :color="BootstrapButtonEnum.danger"
-            @click="closeForm"
-        >
-          Annuler
-        </CustomButton>
-        <CustomButton
-            class="mt-1"
-            style="margin-left: 5px"
-            :color="BootstrapButtonEnum.primary"
-            @click="saveParcours"
-        >
-          Enregistrer
-        </CustomButton>
-      </div>
-    </div>
-  </div>
-</template>
+  <CustomModal :isOpen="isOpen">
+    <template v-slot:title>
+      <template v-if="parcours && parcours.ID"> Modification du parcours </template>
+      <template v-else> Nouveau parcours </template>
+    </template>
+    <template v-slot:body>
+      <div class="text-start mt-1 mb-1">
+        <form>
+          <CustomInput v-model="currentParcours.NomParcours" id="intitule" libelle="Intitulé" type="text"
 
+                       placeholder="Intitulé du parcours" :error="formErrors.NomParcours" />
+
+          <CustomInput v-model="currentParcours.AnneeFormation" class="mt-2" id="annee" libelle="Année" type="number"
+
+                       placeholder="Année de formation" />
+
+        </form>
+
+      </div>
+
+      <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.danger" @click="closeForm">
+
+        Annuler
+
+      </CustomButton>
+
+      <CustomButton class="mt-1" style="margin-left: 5px" :color="BootstrapButtonEnum.primary" @click="saveParcours">
+
+        Enregistrer
+      </CustomButton>
+    </template>
+  </CustomModal>
+</template>
 <style scoped>
 .custom-modal {
   position: absolute;
