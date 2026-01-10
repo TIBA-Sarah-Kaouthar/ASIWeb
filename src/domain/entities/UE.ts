@@ -1,4 +1,7 @@
 ﻿import { Parcours } from './Parcours';
+
+
+
 export interface IUE {
 
     ID: number | null;

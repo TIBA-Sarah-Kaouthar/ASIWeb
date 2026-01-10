@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import { UEDAO } from '@/domain/daos/UEDAO';
 
 const router = useRouter();
-const UeForm = ref<typeof UEForm | null>(null);
+const ueForm = ref<typeof UEForm | null>(null);
 const UE = ref<UE[]>([]);
 
 const formatterEdition = (ue: UE) => {
@@ -54,8 +54,8 @@ const columns = [
     field: 'EditionUE',
     label: 'Edition',
     formatter: formatterEdition,
-    onClick: (UE: UE) => {
-      router.push(`/UE/${UE.ID}`);
+    onClick: (ue: UE) => {
+      ueForm.value?.openForm(ue);
     },
     style: 'width: 32px;text-align:center;'
   },
@@ -87,7 +87,7 @@ onMounted(() => {
         <div class="card-title">
           <h4>Liste des UEs</h4>
         </div>
-        <CustomButton :color="BootstrapButtonEnum.info" @click="() => UEForm?.openForm()">
+        <CustomButton :color="BootstrapButtonEnum.info" @click="() => ueForm?.openForm()">
           Ajouter une UE
         </CustomButton>
       </div>
