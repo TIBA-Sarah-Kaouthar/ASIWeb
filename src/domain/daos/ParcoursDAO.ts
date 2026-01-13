@@ -23,10 +23,10 @@ export class ParcoursDAO implements IDAO<Parcours> {
             throw new Error('Impossible de créer le nouveau parcours');
         }
     }
-   /* public async get(id: number): Promise<Parcours> {
-        // Retrieve a Parcours document from the database 
-        return { ID: id, NomParcours: 'Parcours 1', AnneeFormation: 2024 };
-    }*/
+    /* public async get(id: number): Promise<Parcours> {
+         // Retrieve a Parcours document from the database 
+         return { ID: id, NomParcours: 'Parcours 1', AnneeFormation: 2024 };
+     }*/
 
     public async update(id: number, data: Parcours): Promise<Parcours> {
         try {
@@ -49,14 +49,14 @@ export class ParcoursDAO implements IDAO<Parcours> {
         }
     }
     // test pour voir si ça s'affiche sur l'ecran 
-   /* public async list(): Promise<Parcours[]> {
-        // List all Parcours documents from the database 
-        return [
-            { ID: 1, NomParcours: 'Parcours 1', AnneeFormation: 2024 },
-            { ID: 2, NomParcours: 'Parcours 2', AnneeFormation: 2024 }
-        ];
-    }*/
-    
+    /* public async list(): Promise<Parcours[]> {
+         // List all Parcours documents from the database 
+         return [
+             { ID: 1, NomParcours: 'Parcours 1', AnneeFormation: 2024 },
+             { ID: 2, NomParcours: 'Parcours 2', AnneeFormation: 2024 }
+         ];
+     }*/
+
     // là on parcours ce qu'on a dans la DB et cest avec P maj !!
     public async list(): Promise<Parcours[]> {
         const response = await axios.get(
