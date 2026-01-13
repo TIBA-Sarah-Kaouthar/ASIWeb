@@ -48,9 +48,18 @@ const emit = defineEmits<{
 const openForm = (etudiant: Etudiant | null = null) => {
   isOpen.value = true;
 
-  currentEtudiant.value = etudiant
-      ? (structuredClone(toRaw(etudiant)) as Etudiant)
-      : new Etudiant(null, null, null, null, null);
+  if (etudiant) {
+    // Créer une instance Etudiant qu'on va passer dans ce formulaire
+    currentEtudiant.value = new Etudiant(
+        etudiant.ID,
+        etudiant.Nom,
+        etudiant.Prenom,
+        etudiant.Email,
+        etudiant.Parcours
+    );
+  } else {
+    currentEtudiant.value = new Etudiant(null, null, null, null, null);
+  }
 };
 
 const closeForm = () => {

@@ -28,7 +28,7 @@ export class EtudiantDAO {
         try {
             const payload = (data as any).toJSON ? (data as any).toJSON() : data;
 
-            // logs utiles
+            // logs  des erreurs pour voir
             console.log("UPDATE -> URL:", `${import.meta.env.VITE_API_URL}/api/etudiants/${id}`);
             console.log("UPDATE -> PAYLOAD:", payload);
 
