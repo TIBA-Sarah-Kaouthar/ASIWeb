@@ -28,6 +28,12 @@ const router = createRouter({
           name: 'etudiant',
           component: EtudiantListView
       },
+      {
+          path: "/UE/:id/gestion",
+          name: "ue-gestion",
+          component: () => import("@/presentation/views/UEGestionView.vue"),
+      }
+
   ] 
 });
 

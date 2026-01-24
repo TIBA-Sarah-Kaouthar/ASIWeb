@@ -33,7 +33,6 @@ export class UEDAO {
                 )
         );
     }
-
     async create(data: UE): Promise<UE> {const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/Ue`, data.toJSON());
 
         const ue = response.data;

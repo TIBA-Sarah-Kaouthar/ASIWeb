@@ -22,10 +22,12 @@ const formatterSuppression = (ue: UE) => {
 };
 
 const onUECreated = (newUE: UE) => {
+  console.log("create:ue reçu", newUE);
   UE.value.unshift(newUE);
 };
 
 const onUEUpdated = (updatedUE: UE) => {
+  console.log("update:ue reçu", updatedUE);
   const index = UE.value.findIndex((u) => u.ID === updatedUE.ID);
   if (index !== -1) {
     UE.value[index] = updatedUE;
@@ -49,19 +51,23 @@ const onDeleteUE = (ue: UE) => {
   });
 };
 
+const goManage = (ue: UE) => {
+  router.push({ name: "ue-gestion", params: { id: ue.ID } });
+};
+
 const columns = [
   {
     field: 'EditionUE',
     label: 'Edition',
     formatter: formatterEdition,
-    onClick: (ue: UE) => {
-      ueForm.value?.openForm(ue);
-    },
+    onClick: goManage,
     style: 'width: 32px;text-align:center;'
   },
   { field: 'ID', label: 'ID', formatter: null, onClick: null, style: null },
-  { field: 'Numero', label: 'Numéro', formatter: null, onClick: null, style: null },
-  { field: 'Intitulee', label: 'Intitulé', formatter: null, onClick: null, style: null },
+
+  { field: 'NumeroUe', label: 'Numéro', formatter: null, onClick: null, style: null },
+  { field: 'Intitule', label: 'Intitulé', formatter: null, onClick: null, style: null },
+
   {
     field: 'DeleteUE',
     label: 'Suppression',
@@ -70,6 +76,7 @@ const columns = [
     style: 'width: 32px;text-align:center;'
   },
 ];
+
 
 onMounted(() => {
   UEDAO.getInstance().list().then((data) => {
@@ -107,4 +114,3 @@ onMounted(() => {
       @update:ue="onUEUpdated"
   />
 </template>
-

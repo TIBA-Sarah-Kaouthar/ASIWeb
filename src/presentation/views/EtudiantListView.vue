@@ -24,10 +24,7 @@ const formatterEdition = () => '<i class="bi bi-pen-fill text-primary"></i>';
 const formatterSuppression = () => '<i class="bi bi-trash-fill text-danger"></i>';
 const formatterParcours = (e: any) => e?.Parcours?.NomParcours ?? "";
 
-/**
- * ✅ Mapping API -> Entité FRONT (on garde TON Etudiant.ts)
- * API peut renvoyer: id/ID, nom/Nom, prenom/Prenom, email/Email, parcours_id, Parcours
- */
+
 const mapApiEtudiantToEntity = (e: any, parcoursById: Map<number, string>) => {
   const id = e?.ID ?? e?.id ?? null;
   const nom = e?.Nom ?? e?.nom ?? null;
@@ -56,22 +53,18 @@ const loadEtudiants = async () => {
     }
   });
 
-  // 2) Charger étudiants
   const etudiantsApi: any[] = await EtudiantDAO.getInstance().list();
 
-  // 3) Mapper API -> Entité front
   etudiantsList.value = etudiantsApi.map((e: any) =>
       mapApiEtudiantToEntity(e, parcoursById)
   );
 };
 
 const onEtudiantCreated = async () => {
-  // ✅ simple & fiable
   await loadEtudiants();
 };
 
 const onEtudiantUpdated = async () => {
-  // ✅ simple & fiable
   await loadEtudiants();
 };
 
