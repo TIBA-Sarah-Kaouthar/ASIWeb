@@ -4,6 +4,11 @@ import { ref } from 'vue';
 import UEForm from '@/presentation/components/forms/UEForm.vue';
 import type {Parcours} from "@/domain/entities/Parcours";
 
+
+/* Ce fichier, permet de faire les appel API HTTP
+    Convertit les reponses API en instance UE
+    les fonctions list, update, delete, create sont là
+ */
 const UEFormRef = ref<InstanceType<typeof UEForm> | null>(null);
 
 export class UEDAO {

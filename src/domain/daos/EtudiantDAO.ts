@@ -1,6 +1,10 @@
 ﻿import axios from "axios";
 import type { Etudiant } from "@/domain/entities/Etudiant";
 
+/* Ce fichier, permet de faire les appel API HTTP
+    Convertit les reponses API en instance Etudiant
+    les fonctions list, update, delete, create sont là
+ */
 export class EtudiantDAO {
     private static instance: EtudiantDAO;
 

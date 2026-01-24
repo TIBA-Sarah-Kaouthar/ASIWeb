@@ -1,4 +1,9 @@
-﻿<script setup lang="ts">
+﻿/*
+ce fichier c'est la page qui affiche la liste des UEs
+fait un appelle a la route UE gestion
+C reate, update, delete, c'est géré ici
+ */
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { BootstrapButtonEnum } from '@/types/BootstrapButtonEnum';
@@ -11,27 +16,23 @@ import { UEDAO } from '@/domain/daos/UEDAO';
 
 const router = useRouter();
 const ueForm = ref<typeof UEForm | null>(null);
-const UE = ref<UE[]>([]);
+const UEList = ref<UE[]>([]);
 
-const formatterEdition = (ue: UE) => {
+const formatterEdition = (_ue: UE) => {
   return '<i class="bi bi-pen-fill text-primary"></i>';
 };
 
-const formatterSuppression = (ue: UE) => {
+const formatterSuppression = (_ue: UE) => {
   return '<i class="bi bi-trash-fill text-danger"></i>';
 };
 
 const onUECreated = (newUE: UE) => {
-  console.log("create:ue reçu", newUE);
-  UE.value.unshift(newUE);
+  UEList.value.unshift(newUE);
 };
 
 const onUEUpdated = (updatedUE: UE) => {
-  console.log("update:ue reçu", updatedUE);
-  const index = UE.value.findIndex((u) => u.ID === updatedUE.ID);
-  if (index !== -1) {
-    UE.value[index] = updatedUE;
-  }
+  const index = UEList.value.findIndex((u) => u.ID === updatedUE.ID);
+  if (index !== -1) UEList.value[index] = updatedUE;
 };
 
 const onDeleteUE = (ue: UE) => {
@@ -42,11 +43,14 @@ const onDeleteUE = (ue: UE) => {
     cancelButtonText: 'Annuler',
   }).then((result) => {
     if (result.isConfirmed) {
-      UEDAO.getInstance().delete(ue.ID!).then(() => {
-        UE.value = UE.value.filter((u) => u.ID !== ue.ID);
-      }).catch(() => {
-        Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression de l\'UE', 'error');
-      });
+      UEDAO.getInstance()
+          .delete(ue.ID!)
+          .then(() => {
+            UEList.value = UEList.value.filter((u) => u.ID !== ue.ID);
+          })
+          .catch(() => {
+            Swal.fire('Erreur', "Une erreur est survenue lors de la suppression de l'UE", 'error');
+          });
     }
   });
 };
@@ -61,29 +65,29 @@ const columns = [
     label: 'Edition',
     formatter: formatterEdition,
     onClick: goManage,
-    style: 'width: 32px;text-align:center;'
+    style: 'width: 32px;text-align:center;',
   },
   { field: 'ID', label: 'ID', formatter: null, onClick: null, style: null },
-
   { field: 'NumeroUe', label: 'Numéro', formatter: null, onClick: null, style: null },
   { field: 'Intitule', label: 'Intitulé', formatter: null, onClick: null, style: null },
-
   {
     field: 'DeleteUE',
     label: 'Suppression',
     formatter: formatterSuppression,
     onClick: onDeleteUE,
-    style: 'width: 32px;text-align:center;'
+    style: 'width: 32px;text-align:center;',
   },
 ];
 
-
 onMounted(() => {
-  UEDAO.getInstance().list().then((data) => {
-    UE.value = data;
-  }).catch((ex) => {
-    Swal.fire('Erreur', ex.message, 'error');
-  });
+  UEDAO.getInstance()
+      .list()
+      .then((data) => {
+        UEList.value = data;
+      })
+      .catch((ex) => {
+        Swal.fire('Erreur', ex.message, 'error');
+      });
 });
 </script>
 
@@ -99,18 +103,10 @@ onMounted(() => {
         </CustomButton>
       </div>
       <div class="card-body">
-        <CustomTable
-            idAttribute="ID"
-            :columns="columns"
-            :data="UE"
-        />
+        <CustomTable idAttribute="ID" :columns="columns" :data="UEList" />
       </div>
     </div>
   </div>
 
-  <UEForm
-      ref="ueForm"
-      @create:ue="onUECreated"
-      @update:ue="onUEUpdated"
-  />
+  <UEForm ref="ueForm" @create:ue="onUECreated" @update:ue="onUEUpdated" />
 </template>

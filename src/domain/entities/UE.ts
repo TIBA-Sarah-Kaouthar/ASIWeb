@@ -1,6 +1,6 @@
 ﻿import { Parcours } from './Parcours';
 
-
+/* ce fichier sert à definiir les attribut et la forme de l'UE*/
 
 export interface IUE {
 

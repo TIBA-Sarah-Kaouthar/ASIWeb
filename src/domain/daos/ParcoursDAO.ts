@@ -2,7 +2,10 @@
 import type { IDAO } from './IDAO';
 import axios from 'axios';
 
-
+/* Ce fichier, permet de faire les appel API HTTP
+    recupere les listes des parcours du backend
+    les fonctions list, update, delete, create sont là
+ */
 export class ParcoursDAO implements IDAO<Parcours> {
     private static instance: ParcoursDAO;
 

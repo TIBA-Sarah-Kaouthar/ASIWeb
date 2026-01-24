@@ -1,5 +1,5 @@
 ﻿import type { Parcours } from "./Parcours";
-
+/* ce fichier sert à definir la forme d'un etdiant et ce qu'il contient comme information, toJSON c'est pour preparer les données a envoyer au backend*/
 export interface IEtudiant {
     ID: number | null;
     nom: string | null;

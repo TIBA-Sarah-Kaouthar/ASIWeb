@@ -11,3 +11,4 @@ export class Parcours implements IParcours {
         public AnneeFormation: number | null
     ) {}
 }
+/* ce fichier sert à definir la forme d'un parcours et ce qu'il contient*/

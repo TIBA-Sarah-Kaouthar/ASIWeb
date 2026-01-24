@@ -1,10 +1,13 @@
-﻿import { UEDAO } from "@/domain/daos/UEDAO";
+﻿/* Ce fichier, centralise toutes les activités a faire vec les autres DAO
+    Comme recuperer les parcours pour modifier, UE pour modifier
+    Ici je gére les parcours en localstorage, pour éviter de trop toucher au backend
+    je gére les notes des etudiants, les listes
+    les parcours, les listes liée à une UE bien sur
+    le fait que les étudiants changent si je change de parcours...etc
+ */
+import { UEDAO } from "@/domain/daos/UEDAO";
 import { ParcoursDAO } from "@/domain/daos/ParcoursDAO";
 import { EtudiantDAO } from "@/domain/daos/EtudiantDAO";
-
-import type { UE } from "@/domain/entities/UE";
-import type { Parcours } from "@/domain/entities/Parcours";
-import type { Etudiant } from "@/domain/entities/Etudiant";
 
 export type UEBasic = {
     ID: number;
@@ -18,7 +21,7 @@ export type ParcoursLite = {
 };
 
 export type EtudiantNoteRow = {
-    ID: number; // etudiant id
+    ID: number;
     nom: string | null;
     prenom: string | null;
     email: string | null;
@@ -35,7 +38,6 @@ export class UEGestionDAO {
         return UEGestionDAO.instance;
     }
 
-    // ---------- LocalStorage keys ----------
     private parcoursKey(ueId: number) {
         return `ue:${ueId}:parcours_ids`;
     }
@@ -43,7 +45,6 @@ export class UEGestionDAO {
         return `ue:${ueId}:notes`;
     }
 
-    // ---------- Helpers ----------
     private readNumberArray(key: string): number[] {
         try {
             const raw = localStorage.getItem(key);
@@ -59,7 +60,7 @@ export class UEGestionDAO {
         localStorage.setItem(key, JSON.stringify(Array.from(new Set(values))));
     }
 
-    private readNotesMap(ueId: number): Record<number, number | null> {
+    private readNotesMap(ueId: number): Record<string, number | null> {
         try {
             const raw = localStorage.getItem(this.notesKey(ueId));
             if (!raw) return {};
@@ -70,19 +71,15 @@ export class UEGestionDAO {
         }
     }
 
-    private writeNotesMap(ueId: number, map: Record<number, number | null>) {
+    private writeNotesMap(ueId: number, map: Record<string, number | null>) {
         localStorage.setItem(this.notesKey(ueId), JSON.stringify(map));
     }
 
-    // ---------- UE basic ----------
     public async getUEBasic(ueId: number): Promise<UEBasic> {
-        // pas besoin de backend spécifique : on prend la liste existante et on trouve l'UE
         const list = await UEDAO.getInstance().list();
         const ue = list.find((u: any) => u.ID === ueId) as any;
 
-        if (!ue) {
-            throw new Error("UE introuvable");
-        }
+        if (!ue) throw new Error("UE introuvable");
 
         return {
             ID: ue.ID,
@@ -91,19 +88,20 @@ export class UEGestionDAO {
         };
     }
 
-    public async updateUEBasic(ueId: number, payload: { Intitule: string; NumeroUe: string | number }): Promise<void> {
-        // on réutilise ton update existant => modification minime
+    public async updateUEBasic(
+        ueId: number,
+        payload: { Intitule: string; NumeroUe: string | number }
+    ): Promise<void> {
         const list = await UEDAO.getInstance().list();
         const ue = list.find((u: any) => u.ID === ueId) as any;
         if (!ue) throw new Error("UE introuvable");
 
         ue.Intitule = payload.Intitule;
-        ue.NumeroUe = payload.NumeroUe;
+        ue.NumeroUe = payload.NumeroUe == null ? null : String(payload.NumeroUe);
 
         await UEDAO.getInstance().update(ueId, ue);
     }
 
-    // ---------- Parcours liés à l'UE (local) ----------
     public async listAllParcoursLite(): Promise<ParcoursLite[]> {
         const parcours = await ParcoursDAO.getInstance().list();
         return (parcours as any[]).map((p: any) => ({
@@ -113,15 +111,16 @@ export class UEGestionDAO {
     }
 
     public async listUEParcoursIds(ueId: number): Promise<number[]> {
-        // 1) on lit localStorage
         const stored = this.readNumberArray(this.parcoursKey(ueId));
         if (stored.length) return stored;
 
-        // 2) sinon on essaye de prendre ce que l'UE a déjà (si ton backend renvoie ue.Parcours)
         const list = await UEDAO.getInstance().list();
         const ue = list.find((u: any) => u.ID === ueId) as any;
+
         if (ue?.Parcours && Array.isArray(ue.Parcours)) {
-            const ids = ue.Parcours.map((p: any) => p.ID).filter((x: any) => typeof x === "number");
+            const ids = ue.Parcours
+                .map((p: any) => p?.ID ?? p?.id)
+                .filter((x: any) => typeof x === "number");
             this.writeNumberArray(this.parcoursKey(ueId), ids);
             return ids;
         }
@@ -140,46 +139,46 @@ export class UEGestionDAO {
         this.writeNumberArray(this.parcoursKey(ueId), current.filter((id) => !toRemove.has(id)));
     }
 
-    // ---------- Étudiants + notes ----------
     public async listEtudiantsNotesForUE(ueId: number): Promise<EtudiantNoteRow[]> {
         const parcoursIds = new Set(await this.listUEParcoursIds(ueId));
         const parcoursLite = await this.listAllParcoursLite();
-        const parcoursNameById = new Map<number, string>(parcoursLite.map(p => [p.ID, p.NomParcours]));
+        const parcoursNameById = new Map<number, string>(parcoursLite.map((p) => [p.ID, p.NomParcours]));
 
         const etudiants = await EtudiantDAO.getInstance().list();
         const notesMap = this.readNotesMap(ueId);
 
         const getParcoursId = (e: any): number | null => {
-            // selon tes retours API, l'étudiant peut avoir Parcours objet ou parcours_id
             return e?.Parcours?.ID ?? e?.parcours_id ?? e?.ParcoursID ?? null;
         };
 
         const rows = (etudiants as any[])
             .filter((e) => {
                 const pid = getParcoursId(e);
-                return pid != null && parcoursIds.has(pid);
+                const id = e?.ID ?? e?.id;
+                return typeof id === "number" && pid != null && parcoursIds.has(pid);
             })
             .map((e) => {
                 const pid = getParcoursId(e);
-                const etuId = e?.ID ?? e?.id;
+                const etuId = (e?.ID ?? e?.id) as number;
+                const noteRaw = notesMap[String(etuId)];
+
                 return {
                     ID: etuId,
                     nom: e?.Nom ?? e?.nom ?? null,
                     prenom: e?.Prenom ?? e?.prenom ?? null,
                     email: e?.Email ?? e?.email ?? null,
                     parcoursNom: pid ? (parcoursNameById.get(pid) ?? null) : null,
-                    note: typeof notesMap[etuId] === "number" ? notesMap[etuId] : (notesMap[etuId] ?? null),
+                    note: typeof noteRaw === "number" ? noteRaw : (noteRaw ?? null),
                 } as EtudiantNoteRow;
             });
 
-        // tri simple (optionnel)
         rows.sort((a, b) => (a.nom ?? "").localeCompare(b.nom ?? ""));
         return rows;
     }
 
     public async upsertNote(ueId: number, etudiantId: number, note: number | null): Promise<void> {
         const map = this.readNotesMap(ueId);
-        map[etudiantId] = note;
+        map[String(etudiantId)] = note;
         this.writeNotesMap(ueId, map);
     }
 }
